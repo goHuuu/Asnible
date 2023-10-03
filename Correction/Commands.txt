@@ -1,0 +1,19 @@
+ansible client1 -m blockinfile -a "block=Hello dest=/tmp/file.txt"
+ou 
+ansible client1 -m lineinfile -a "line=Hello path=/tmp/file.txt"
+
+ansible client1 -m timezone -a "name=Europe/Paris" -b
+
+setup : découvrir tous les facts d'une machine
+
+[group3:children]
+
+ansible groupX -m ping -i /root/inventories/inventaire1
+
+ansible groupX -m ping -i /root/inventories/inventaire1 -i /root/inventories/inventaire2
+ansible groupX -m ping -i /root/inventories/
+
+
+
+
+ansible client2 -m apt -a "update_cache=yes"

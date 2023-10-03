@@ -1,0 +1,43 @@
+
+---
+- name: Multiple json_queries
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./secret.yml
+  vars:
+    fullinvt:
+      dv-cn-c1:
+        ClusterName: dv-cn-c1-cluster-name
+        DomainName: dv-cn-c1-domain-name
+        PolicyName: dv-cn-c1-policy-name
+      dv-cn-c2:
+        ClusterName: dv-cn-c2-cluster-name
+        DomainName: dv-cn-c2-domain-name
+        PolicyName: dv-cn-c2-policy-name
+      dv-cn-4:
+        ClusterName: dv-cn-4-cluster-name
+        DomainName: dv-cn-4-domain-name
+        PolicyName: dv-cn-4-policy-name
+  tasks:
+    - name: Create `json_query` object
+      set_fact:
+        # Multiline filter application
+        result: >
+          {{ 
+            (result | default({})) | 
+            combine({item: {
+              "ClusterName": fullinvt | json_query('"' + item + '"' + ".ClusterName"),
+              "DomainName": fullinvt | json_query('"' + item + '"' + ".DomainName"),
+              "PolicyName": fullinvt | json_query('"' + item + '"' + ".PolicyName")
+            }}) 
+          }}
+      loop:
+        - dv-cn-c1
+        - dv-cn-c2
+        - dv-cn-4
+
+    - debug:
+        var: item
+      loop: "{{ result | dict2items }}"

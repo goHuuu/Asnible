@@ -1,0 +1,41 @@
+---
+- name: Vérification de la connexion
+  ping:
+
+- name: curl
+  apt:
+    name: curl
+    state: latest
+    update_cache: yes
+
+- name: openssh
+  apt:
+    name: openssh-server
+    state: latest
+
+- name: ca-certificates
+  apt:
+    name: ca-certificates
+    state: latest
+
+- name: postfix
+  apt:
+    name: postfix
+    state: latest
+
+- name: gitlab
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+    dest: /home/vagrant/
+
+- name: gitlab script
+  shell: sudo bash /home/vagrant/script.deb.sh
+  args:
+    creates: /etc/gitlab/gitlab.rb
+    
+- name: gitlab-ce
+  apt:
+    name: gitlab-ce
+    state: latest
+  environment:
+    EXTERNAL_URL: gitlab_external_url

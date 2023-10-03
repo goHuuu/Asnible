@@ -1,0 +1,61 @@
+---
+- name: stop docker
+  systemd:
+    state: stopped
+    name: docker
+  ignore_errors: yes
+
+- name: Uninstall docker
+  package:
+    name: ["docker-ce","docker-ce-cli"]
+    state: absent
+
+- name: uninstall Docker for Debian distros
+  file:
+    path: "docker-debian-like.yaml"
+    state: absent
+
+- name : Delete Docker config files
+  file:
+    path: "/etc/docker"
+    state: absent
+
+- name: Delete all Docker  Network interfaces presents on the host
+  file:
+    path: "/var/lib/cni/networks"
+    state: absent
+
+- name: Delete plugin CNI
+  file:
+    path: /etc/cni/net.d
+    state: absent
+
+- name: Delete /var/lib/docker
+  file:
+    path: /var/lib/docker
+    state: absent
+
+- name: Delete /var/lib/dockershim
+  file:
+    path: /var/lib/dockershim
+    state: absent
+
+- name: Delete /var/run/dockershim.sock
+  file:
+    path: /var/run/dockershim.sock
+    state: absent
+
+- name: Delete /var/run/docker.sock
+  file:
+    path: /var/run/docker.sock
+    state: absent
+
+- name: Unmount /var/run/docker/netns/default volumes
+  mount:
+    path: /var/run/docker/netns/default
+    state: unmounted
+
+- name: Delete /var/run/docker dir
+  file:
+    path: /var/run/docker
+    state: absent

@@ -1,0 +1,19 @@
+---
+- hosts: client2
+  become: true
+  vars:
+    password: $6$lFU5wZVADNIxRgJZ$M2UCURJPcx9GovIUluecQAJhtmo0RG9w.YPMze5KwoUo3e13EBSu0qgtwrUbEdyMFuHgNd6FFIbVv6ZJnnkQX0
+    password2: $6$lFU5wZVADNIxRgJZ$M2UCURJPcx9GovIUluecQAJhtmo0RG9w.YPMze5KwoUo3e13EBSu0qgtwrUbEdyMFuHgNd6FFIbVv6ZJnnkQX0
+  tasks:
+  - name: Creation utilisateur boby
+    user: 
+      name: boby
+      password: "{{password}}"
+      update_password: on_create
+  - name: Creation utilisateur pepito
+    user:
+      name: pepito
+      password: "{{password2}}"
+      update_password: on_create
+  roles:
+  - ahuffman.sudoers

@@ -1,0 +1,12 @@
+---
+- name: Add Docker repository for Debian  distros
+  include_tasks: "repo-debian-like.yaml"
+
+- name: Install Docker for Debian  distros
+  include_tasks: "docker-debian-like.yaml"
+
+- name: Make sure docker is running
+  systemd:
+    state: started
+    name: docker
+    enabled: yes

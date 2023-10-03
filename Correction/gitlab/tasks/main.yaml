@@ -1,0 +1,7 @@
+---
+- name: OS cible ubuntu
+  import_tasks: ubuntu.yaml
+  when: ansible_os_platform|lower == 'ubuntu'
+- name: OS autre
+  msg: "l'OS n'est pas adapté"
+  when: ansible_os_platform|lower != 'ubuntu'

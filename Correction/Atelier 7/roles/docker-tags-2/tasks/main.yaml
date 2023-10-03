@@ -1,0 +1,7 @@
+---
+- name: Install runtime
+  include_tasks: docker.yaml
+
+- name: Uninstall docker
+  include_tasks: uninstall-docker.yaml
+  tags: [ 'never', 'uninstall' ]

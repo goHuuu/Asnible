@@ -1,0 +1,9 @@
+---
+- name: Install runtime
+  include_tasks: docker.yaml
+  when: container_engine == "docker"
+
+- name: Uninstall docker
+  include_tasks: uninstall-docker.yaml
+  when: container_engine == "docker"
+  tags: [ 'never', 'uninstall' ]

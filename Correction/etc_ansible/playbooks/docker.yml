@@ -1,0 +1,5 @@
+---
+- hosts: clients_linux
+  become: true
+  roles:
+  - docker-full

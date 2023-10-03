@@ -1,0 +1,62 @@
+---
+- hosts: client2
+  become: true
+  vars:
+    mysql_bind_address: "{{ansible_ens4.ipv4.address}}"
+    mysql_users:
+      pepito:
+        priv: '*.*:ALL'
+        host: '10.132.0.35'
+        password: !vault |
+                  $ANSIBLE_VAULT;1.1;AES256
+                  37323431316465356239323339633462643566306161366633613336396438633839656262373865
+                  3238306264376434353363663036353539373631333437320a613331326362313963386338353062
+                  33316535653238636465623866313632366131373835623865623537376235653937306666393539
+                  3431623461343431320a366237653465643837396230653435646538653161616366653664616332
+                  3230
+    mysql_packages:
+    - mysql-server
+    - python-mysqldb
+  tasks:
+  - name: Vérification de la connexion
+    ping:
+  - name: installation packages serveur MySQL [mysql-server,python-mysqldb]
+    apt:
+      name: "{{ mysql_packages }}"
+      state: latest
+      update_cache: yes
+  - name: Autorisation connexions à distance
+    lineinfile:
+      path: /etc/mysql/mysql.conf.d/mysqld.cnf
+      regexp:   '^bind-address'
+      line: "bind-address = {{ mysql_bind_address }}"
+    notify:
+      - Relancement du service mysql
+  - name: Gestion du service mysql
+    service:
+      name: mysql
+      state: started
+      enabled: yes
+  - name: Création de l utilisateur boby
+    no_log: true
+    mysql_user:
+      state: present
+      name: "{{ item.key }}"
+      host: "{{ item.value.host }}"
+      password: "{{ item.value.password }}"
+      priv: "{{ item.value.priv }}"
+    loop: "{{ query('dict', mysql_users) }}"
+  - name: Récupération MySQL Version
+    shell: mysql --version | awk '{print $5}' | awk 'gsub(",","")'
+    register: mysql_version
+    changed_when: False
+  - name: Affichage version MySQL
+    debug:
+      msg: "{{ mysql_version.stdout }}"
+
+
+  handlers:
+  - name: Relancement du service mysql
+    service:
+      name: mysql
+      state: restarted

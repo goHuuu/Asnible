@@ -1,0 +1,6 @@
+---
+- name: Install docker
+  package:
+    name: ["containerd.io","docker-ce","docker-ce-cli"]
+    state: latest
+    update_cache: yes
